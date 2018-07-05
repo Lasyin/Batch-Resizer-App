@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="../assets/fontawesome-all.css" />
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+      body {
+        -webkit-app-region: drag;
+        overflow-x: hidden;
+        overflow-y: hidden;
+      }
+      .light {
+        color: #E4E4FB;
+      }
+      .l-mid {
+        color: #8F8FF0;
+      }
+      .mid {
+        color: #3333E3;
+      }
+      .d-mid {
+        color: #15159D;
+      }
+      .dark {
+        color: #090935; //rgba(9, 9, 53, 1)
+      }
+      .icon-xl {
+        font-size: 10em;
+      }
+      .icon-l {
+        font-size: 7em;
+      }
+      .icon-m {
+        font-size: 2.5em;
+      }
+      .icon-s {
+        font-size: 1.5em;
+      }
+      .icon-xs {
+        font-size: 1em;
+      }
+      #bg {
+        width: 100%;
+        height: 100%;
+        min-width: 100%;
+        min-height: 100%;
+        position: absolute;
+        z-index: -2;
+        //background: linear-gradient(to bottom, #E4E4FB 0%, #E4E4FB 50%, #8F8FF0 50%, #8F8FF0 100%);
+        background-color: black;
+      }
+      html, body {
+        height: 100%;
+      }
+      body {
+        display: table;
+        margin: auto;
+      }
+      #symbol > * {
+        width: 125px;
+        height: 160px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        max-width: 100%;
+        max-height: 100%;
+        z-index: -1;
+      }
+      #drag-interior {
+        display: flex;
+        border: 2px dashed #E4E4FB;
+        border-radius: 15px;
+        min-height: 50vh;
+        min-width: 50vh;
+        justify-content: center;
+        align-items: center;
+        background: rgba(9, 9, 53, 0.25);
+        color: #E4E4FB;
+      }
+      .center {
+        text-align: center;
+      }
+      .center-div {
+        display: block;
+        margin: 0 auto;
+      }
+      .vertical-center {
+
+      }
+      .container {
+        margin: 1px solid red;
+      }
+      .no-marg {
+        margin: 0;
+      }
+      .flex-container {
+        display: flex;
+        min-height: 100vh;
+        min-width: 100vw;
+        justify-content: center;
+        align-items: center;
+      }
+      .del {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        bottom: 5%;
+        right: 0%;
+      }
+      .del > div {
+        font-size: 0.5em;
+      }
+      .light {
+        color: white;
+      }
+      #steps-container {
+        position: absolute;
+        //border: 1px solid white;
+        color: white;
+        width: 100%;
+        height: 20px;
+        bottom: 25px;
+        text-align: center;
+      }
+      #steps-interior {
+        color: white;
+      }
+      #main-window {
+
+      }
+      #main-window-contents {
+        color: #191C1F;
+      }
+      #size-pick {
+        overflow: scroll;
+        display: flex;
+        z-index: 1;
+        width: 75vw;
+        height: 75vh;
+        border: 2px dashed #191C1F;
+        border-radius: 5px;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        align-content: flex-start;
+      }
+      #size-pick > #size-add {
+        overflow-y: scroll;
+        display: flex;
+        width: 50%;
+        color: white;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 5px;
+      }
+      #presets {
+        overflow-y: scroll;
+        display: flex;
+        width: 100%;
+        border-bottom: 2px solid #191C1F;
+        color: white;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 5px;
+      }
+      #sizes {
+        display: flex;
+        color: white;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        flex-direction: column;
+      }
+      #sizes > .size {
+        display: flex;
+        margin: 2px;
+        width: 25vw;
+        align-items: center;
+        justify-content: center;
+      }
+      .size > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .size > span > * {
+        margin: 1px;
+      }
+      .size > .size-xbtn {
+        display: flex;
+        margin-left: 15px;
+        color: #cc3333;
+        padding: 1px;
+      }
+      .size > .size-xbtn:hover {
+        color: white;
+      }
+      .size > .size-plusbtn {
+        display: flex;
+        margin-left: 15px;
+        color: #82b74b;
+        padding: 1px;
+      }
+      .size > .size-plusbtn:hover {
+        color: white;
+      }
+      #presets {
+        overflow-y: scroll;
+        display: flex;
+        width: 100%;
+        border-bottom: 2px solid #191C1F;
+        color: white;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 5px;
+      }
+      #presets > .preset {
+        margin: 5px;
+      }
+      #presets > #add-preset {
+        margin: 5px;
+      }
+      #newx, #newy {
+        border: 1px solid #191C1F;
+        border-radius: 5px;
+        color: #191C1F;
+        background-color: white;
+        padding: 1px 5px;
+        margin: 5px;
+        font-size: 0.75em;
+      }
+      #notifications {
+        pointer-events: none;
+        position: absolute;
+        width: 100%;
+        height: 25%;
+        z-index: 2;
+      }
+      #notifications > .alert {
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        width: 75%;
+        margin-top: 5px;
+      }
+      #inputSection {
+        position: absolute;
+        width: 100%;
+        height: 10%;
+        margin-top: 25px;
+        padding: 5px;
+        z-index: 1;
+      }
+      .hide {
+        display: none;
+      }
+      #footer-container {
+        position: absolute;
+        width: 100%;
+        height: 10%;
+        bottom: 0;
+        margin-bottom: 10px;
+        z-index: 1;
+        padding: 5px 10px;
+      }
+      #footer-container > #preset-name-input-container {
+        width: 75%;
+        margin: 0 auto;
+      }
+      #footer-container > #confirm-resize-container > * {
+        width: 75%;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+      #footer-container > #confirm-resize-container > p {
+        color: #f6f7f9;
+        font-size: 0.65em;
+      }
+      #s1-text {
+        position: absolute;
+        bottom: 15px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        z-index: 2;
+      }
+      #s1-text > * {
+        margin: 0;
+        margin-bottom: 10px;
+      }
+      #s1-text > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+      }
+      #s1-text > div > * {
+        margin: 0 5px;
+      }
+      #s1-text-xbtn {
+        color: #cc3333;
+      }
+      #s1-text-xbtn:hover {
+        color: white;
+      }
+      #resize-progress-bar-container {
+        display: flex;
+        position: absolute;
+        left: 0;
+        justify-content: center;
+        min-width: 100%;
+        bottom: 20%;
+      }
+      #resize-progress-bar-outside {
+        width: 75%;
+      }
+      #resize-progress-bar {
+        width: 0%;
+      }
+      #s3-button-bar {
+        display: flex;
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 15px white;
+      }
+      #s3-button-bar > div {
+        padding: 15px;
+        text-align: center;
+      }
+      #s3-button-bar > * {
+        color: white;
+      }
+      #s3-button-bar > *:hover {
+        color: #009f27;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TEMPLATES -->
+
+    <div class="size hide" id="size-template">
+      <span><i class="fas fa-arrows-alt-h"></i><p class="x-display">x</p>&nbsp;&nbsp;<i class="fas fa-arrows-alt-v"></i><p class="y-display">y</p></span>
+      <i class="size-xbtn fas fa-minus-circle icon-xs"></i>
+    </div>
+
+    <button id="preset-template" class="preset btn btn-outline-light hide">preset</button>
+
+    <!-- /TEMPLATES -->
+
+    <div id="bg"></div>
+
+    <div id="notifications">
+
+    </div>
+    <div id="symbol">
+      <!-- s1 -->
+      <div class="s1 hide">
+        <i class="far fa-file-image icon-xl"></i>
+      </div>
+      <!-- s2 -->
+      <div class="s2 hide">
+        <i class="fas fa-ruler-combined icon-xl"></i>
+      </div>
+      <!-- s3 -->
+      <div class="s3 hide">
+        <i class="fas fa-expand-arrows-alt icon-xl"></i>
+      </div>
+    </div>
+    <div class="flex-container" id="drag">
+      <div id="main-window">
+        <div id="main-window-contents">
+          <!-- s1  -->
+          <div class="s1 hide">
+            <div id="s1-text">
+              <div>
+                <i id="s1-text-xbtn" class="fas fa-ban hide"></i>
+                <p id="s1-text-display" class="light">Drop Images</p>
+              </div>
+              <button id="s1-text-btn" class="btn btn-outline-success hide">Resize <i class="fas fa-arrow-alt-circle-right"></i></button>
+            </div>
+          </div>
+          <!-- s2 -->
+          <div class="s2 hide">
+            <div id="size-pick">
+              <div id="presets">
+                <button id="add-preset" class="btn btn-outline-light"><i class="fas fa-plus"></i></button>
+              </div>
+              <div id="sizes">
+                <div id="new-size" class="size">
+                  <span><i class="fas fa-arrows-alt-h"></i><span contenteditable="true" id="newx">x</span>&nbsp;&nbsp;<i class="fas fa-arrows-alt-v"></i><span contenteditable="true" id="newy">y</span></span>
+                  <i id="new-size-btn" class="size-plusbtn fas fa-plus-circle icon-s"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- s3 -->
+          <div class="s3 hide">
+            <div id="s3-button-bar-container" class="hide">
+              <div id="s3-button-bar">
+                <div>
+                  <i id="restart-btn" class="fas fa-undo-alt icon-m"></i>
+                </div>
+                <div>
+                  <i id="info-btn" class="fas fa-info icon-m"></i>
+                </div>
+                <div>
+                  <i id="github-btn" class="fab fa-github icon-m"></i>
+                </div>
+              <!--  <div>
+                  <i id="coffee-btn" class="fas fa-coffee icon-m"></i>
+                </div> -->
+              </div>
+            </div>
+            <div id="resize-progress-bar-container">
+              <div id="resize-progress-bar-outside" class="progress">
+                <div id="resize-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer-container">
+      <div class="input-group hide" id="preset-name-input-container">
+        <input id="preset-name-input" type="text" class="form-control" placeholder="Enter Preset Name" aria-label="Enter Preset Name" aria-describedby="basic-addon2"></input>
+        <div class="input-group-append">
+          <button id="preset-name-btn" class="btn btn-outline-secondary" type="button"><i class="fas fa-check"></i></button>
+        </div>
+      </div>
+      <div id="confirm-resize-container" class="hide">
+        <button id="confirm-resize-btn" class="btn btn-light">Resize x Photos y Times</button>
+        <p id="confirm-resize-total">Total:</p>
+      </div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
