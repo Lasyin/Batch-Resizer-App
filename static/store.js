@@ -17,8 +17,12 @@ class Store {
     fs.writeFileSync(this.path, JSON.stringify(this.data))
   }
   remove(key) {
-    delete this.data[key]
-    fs.writeFileSync(this.path, JSON.stringify(this.data))
+    if(delete this.data[key]){
+      fs.writeFileSync(this.path, JSON.stringify(this.data))
+      return true
+    } else {
+      return false
+    }
   }
 }
 

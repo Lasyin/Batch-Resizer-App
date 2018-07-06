@@ -13,12 +13,12 @@ const store = new Store({
       name: ['iOS', 'Android']
     },
     iOS: {
-      x: [272, 640, 750, 1242, 1125, 1536, 1668, 2048],
-      y: [340, 1136, 1334, 2208, 2436, 2048, 2224, 2732]
+      x: [640, 750, 1242, 1125, 1536, 1668, 2048],
+      y: [1136, 1334, 2208, 2436, 2048, 2224, 2732]
     },
     Android: {
-      x: [5, 6],
-      y: [7, 8]
+      x: [800, 1280, 1920],
+      y: [480, 720, 1080]
     }
   }
 });
@@ -29,7 +29,7 @@ const acceptedFileTypes = ['.jpg', '.jpeg', '.png'] // TODO: more?
 var all_files = [] // all pictures submitted
 
 var all_sizes_x = []
-var all_sizes_y = [] // TODO: consolodate to 1 array?
+var all_sizes_y = []
 
 const scenes = ['s1', 's2', 's3']
 var currScene = ''
@@ -63,6 +63,9 @@ function attachListeners(){
 
   $("#confirm-resize-btn").on('click', function(){
     saveAllSizes()
+    deleteAllSizes() // clear all sizes from screen for potential reload
+    var presetBtns = $("#presets").find('.preset')
+    deactivatePresets(presetBtns) // deactivate preset buttons for potential reload
     loadScene(scenes[2], scenes[1])
     resizeAllImages()
     showConfirmButton(false)
@@ -126,7 +129,7 @@ $('#drag').on("mouseleave", function(event){
   $('#symbol').find(".s1").css('color', '#191C1F')
   $("#bg").css('background-color', "black")
   //$('#drag-interior').hide()
-})
+});
 $('#drag').on("drop", function(event) {
   event.preventDefault()
   $('#drag-interior').hide()
@@ -234,7 +237,7 @@ $("#new-size-btn").on('click', function(){
 function initSizes(){
   $(".size-xbtn").on('click', function(){
     removeSize(this)
-  })
+  });
 }
 function removeSize(size){
   if($(size).parent().hasClass('size')){
@@ -311,7 +314,8 @@ function saveAllSizes(){
 }
 
 // SECTION presets
-addPresetButtonEnabled(false)
+addPresetButtonEnabled(false) // No preset to add
+removePresetButtonEnabled(false) // No preset to remove
 loadInitialPresets()
 function initPresetBtns(){
   var presetBtns = $("#presets").find('.preset').each(function(){
@@ -319,12 +323,15 @@ function initPresetBtns(){
       deactivatePresets(presetBtns)
       activatePreset(this)
     })
-  })
+  });
   $("#add-preset").on('click', function(){
     //console.log("add preset")
     showPresetInput(true)
     showConfirmButton(false)
-  })
+  });
+  $("#remove-preset").on('click', function(){
+    removeActivePreset()
+  });
 }
 
 function loadInitialPresets(){
@@ -344,6 +351,7 @@ function activatePreset(preset){
   var presetObj = store.get(presetName)
   if(presetObj != undefined){
     loadPreset(presetObj)
+    removePresetButtonEnabled(true) // Preset to remove
   } else {
     addNotification("Preset not found.", 5000, "error")
     // TODO: should maybe delete the preset button if preset was not found?
@@ -353,7 +361,8 @@ function deactivatePresets(presetBtns){
   $(presetBtns).each(function(){
     $(this).removeClass('btn-light')
     $(this).addClass('btn-outline-light')
-  })
+  });
+  removePresetButtonEnabled(false) // No preset to remove
 }
 function addPresetBtn(name){
   var template = $("#preset-template").clone()
@@ -421,14 +430,48 @@ function loadPreset(preset){
   }
   addPresetButtonEnabled(false)
 }
-function deletePreset(preset){
+function removeActivePreset(){
   // TODO: Allow to delete presets
+  var presets = $("#presets").find('.preset').each(function(){
+    if($(this).hasClass('btn-light') && !$(this).hasClass('btn-outline-light')){
+    //  console.log('Active: ' + $(this).text())
+      var activePreset = $(this)
+      console.log("AP: " + activePreset.text())
+      if(activePreset != undefined){
+        console.log("Attempting to remove: " + activePreset.text())
+        if(store.remove(activePreset.text())){
+          var allPresetNames = store.get('presets').name
+          if(allPresetNames.indexOf(activePreset.text() > -1)){
+            allPresetNames.splice(allPresetNames.indexOf(activePreset.text()), 1) // remove deleted preset name from names list
+            console.log("New list: " + allPresetNames)
+            var allPresets = store.get('presets')
+            allPresets.name = allPresetNames
+            store.set('presets', allPresets)
+          }
+          activePreset.remove()
+          addNotification('Successfully removed preset', 2500, 'success')
+        } else {
+          addNotification('Could not remove preset.', 2500, 'warning')
+        }
+      } else {
+        addNotification("No active preset, can't delete.", 2500, 'warning')
+      }
+    }
+  });
+
 }
 function addPresetButtonEnabled(val){
   if(val==true){
     $("#add-preset").show()
   } else {
     $("#add-preset").hide()
+  }
+}
+function removePresetButtonEnabled(val){
+  if(val == true){
+    $("#remove-preset").show()
+  } else {
+    $("#remove-preset").hide()
   }
 }
 // SECTION bottom input - preset input
