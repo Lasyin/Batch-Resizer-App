@@ -44,7 +44,6 @@ window.eval = global.eval = function(){
   throw new Error('Eval not supported')
 }
 $(function() {
-  console.log('ready')
   hideScenes(scenes)
   loadScene(scenes[0], '')
 
@@ -76,7 +75,7 @@ function attachListeners(){
     restart()
   });
   $("#github-btn").on('click', function(){
-    openLink("https://github.com/Lasyin/...")
+    openLink("https://github.com/Lasyin/Batch-Resizer-App")
   });
   $("#info-btn").on('click', function(){
     openLink("https://codebryan.com/projects/batch-resizer-app")
@@ -94,24 +93,21 @@ function restart(){
 
 // SECTION misc
 function openLink(href){
-  shell.openExternal(href) // TODO is this ok?
+  shell.openExternal(href)
 }
 
 // SECTION Scene managment
 function loadScene(newScene, previousScene){
   if(previousScene.length != ''){
-    //$("."+previousScene).hide()
     $("."+previousScene).addClass('hide')
   }
   if(newScene.length != ''){
-    //$("."+newScene).show()
     $("."+newScene).removeClass('hide')
     currScene = newScene
   }
 }
 function hideScenes(sceneArr){
   for(var i = 0; i < sceneArr.length; i++){
-    //$("."+sceneArr[i]).hide()
     $("."+sceneArr[i]).addClass('hide')
   }
 }
@@ -128,19 +124,14 @@ $('#drag').on("dragover", function(event) {
 $('#drag').on("mouseleave", function(event){
   $('#symbol').find(".s1").css('color', '#191C1F')
   $("#bg").css('background-color', "black")
-  //$('#drag-interior').hide()
 });
 $('#drag').on("drop", function(event) {
   event.preventDefault()
   $('#drag-interior').hide()
-  console.log('drop')
-  //console.log(event.originalEvent.dataTransfer.files[0].path)
   submittedFiles(event.originalEvent.dataTransfer.files)
-  //ipcRenderer.send('ondragstart', event.dataTransfer.files[0].path)
 });
 
 function submittedFiles(files){
-//  all_files = [] // reset all_file global array
 // TODO: check if file already in array before submitting? Or, allow duplicates?
   for(var i = 0; i < files.length; i++){
     var stats = fs.statSync(files[i].path)
@@ -149,52 +140,27 @@ function submittedFiles(files){
     } else if(stats.isFile()){
       addFile(files[i].path)
     }
-    //console.log('file: ' + files[i].path)
-  /*  if(acceptedFileTypes.includes(path.extname(files[i].path))){
-      console.log("Adding: " + path.extname(files[i].path))
-
-    } else {
-      // TODO: Check if folder was provided, go through contents in that case
-      if(fs.statSync(files[i].path).isDirectory()){
-        console.log("Directory found: " + files[i].path)
-        addDir(files[i].path)
-
-      } else {
-        console.log("Not accepted: " + path.extname(files[i].path))
-      }
-    } */
   }
-  console.log("All files added: " + all_files.length + " " + all_files)
 }
 
 function addFile(file){
-//  console.log("Trying to add file: " + file)
   if(acceptedFileTypes.includes(path.extname(file).toLowerCase())){
-    console.log("Adding: " + file)
     all_files.push(file)
     updateFileCount()
   } else {
-//    console.log("Filetype not accepted: " + file)
     addNotification("Filetype not accepted, skipping and continuing: " + String(file), 5000, 'warning')
   }
 }
 
 function addDir(dir){
   var fullPath = dir
-//  console.log("add dir: " + dir)
   fs.readdir(dir, (err, files) => {
     files.forEach(file => {
-  //    console.log("file " + file)
       var newPath = path.join(fullPath, file)
-  //    console.log("full path " + newPath)
       var stats = fs.statSync(newPath)
       if(stats.isDirectory()){
-        // recursive dir
-        // TODO: Limit nested dirs ?
-    //    console.log("is dir")
         addDir(newPath)
       } else if(stats.isFile()) {
-  //      console.log("is file")
         addFile(newPath)
       }
     });
@@ -262,18 +228,13 @@ function addNewSize(x, y){
     }
   } else {
     var container = $("#sizes")
-    //var newSize = $(container.find(".size")[0]).clone()
-  /*  var newSizeContainer = $('<div/>', {
-      class: "size"
-    })
-    var newSizeSpan = $('<span/>') */
     var newSize = $("#size-template").clone()
     newSize.removeClass('hide')
     newSize.removeAttr('id')
 
     var newx = newSize.find('.x-display').text(x+"px")
     var newy = newSize.find('.y-display').text(y+"px")
-    //console.log(newx)
+
     $(newSize).prependTo(container)
     initSizes()
     addPresetButtonEnabled(true)
@@ -325,7 +286,6 @@ function initPresetBtns(){
     })
   });
   $("#add-preset").on('click', function(){
-    //console.log("add preset")
     showPresetInput(true)
     showConfirmButton(false)
   });
@@ -336,17 +296,15 @@ function initPresetBtns(){
 
 function loadInitialPresets(){
   var presets = store.get('presets').name
-  console.log(presets)
   for(var i = 0; i < presets.length; i++){
     addPresetBtn(presets[i])
   }
 }
 
 function activatePreset(preset){
-  // TODO: Check if preset already active? Maybe not necessary...
   $(preset).removeClass('btn-outline-light')
   $(preset).addClass('btn-light')
-  //console.log($(preset).text() + " preset clicked")
+
   var presetName = $(preset).text()
   var presetObj = store.get(presetName)
   if(presetObj != undefined){
@@ -354,7 +312,6 @@ function activatePreset(preset){
     removePresetButtonEnabled(true) // Preset to remove
   } else {
     addNotification("Preset not found.", 5000, "error")
-    // TODO: should maybe delete the preset button if preset was not found?
   }
 }
 function deactivatePresets(presetBtns){
@@ -368,21 +325,18 @@ function addPresetBtn(name){
   var template = $("#preset-template").clone()
   var lastTemplate = $("#add-preset")
   template.removeAttr('id')
-  // TODO: remove id's from other templates in this file
+
   template.removeClass('hide')
   template.text(name)
   template.insertBefore(lastTemplate)
-  // TODO: save templates in store
+
   initPresetBtns() // attach listeners to buttons
 }
 function savePreset(preset){
-  console.log("saving... " + preset)
   var allPresets = store.get('presets')
-  console.log(allPresets)
   // add preset name to list of preset names
-  // TODO: ask for confirmation if preset already exists?
+
   if(allPresets.name.indexOf(preset) == -1){
-    console.log("DOESNT EXIST YET, ADD")
     allPresets.name.push(preset)
     addPresetBtn(preset)
   }
@@ -391,9 +345,7 @@ function savePreset(preset){
   var y = []
 
   var sizes = $("#sizes").find('.size').not('#new-size')
-  console.log(sizes.length)
   sizes.each(function(){
-    console.log("SIZES:")
     var currX = $(this).find('.x-display').text().replace('px','')
     var currY = $(this).find('.y-display').text().replace('px','')
     if(currX != NaN && currY != NaN){
@@ -407,7 +359,6 @@ function savePreset(preset){
     // save preset into json file with widths and heights
     store.set(preset, {x, y})
 
-    console.log(allPresets)
     store.set('presets', allPresets)
   } else {
     addNotification("Number of widths and number of heights not equal, can not save.", 5000, 'error')
@@ -421,29 +372,23 @@ function loadPreset(preset){
   if(preset.x.length === preset.y.length){
     deleteAllSizes()
     for(var i = 0; i < preset.x.length; i++){
-      //console.log(preset.x[i])
       addNewSize(preset.x[i], preset.y[i])
     }
   } else {
     addNotification("Preset corrupted, data missing.", 5000, "error")
-    // TODO: Delete preset button since preset isn't valid?
   }
   addPresetButtonEnabled(false)
 }
 function removeActivePreset(){
-  // TODO: Allow to delete presets
   var presets = $("#presets").find('.preset').each(function(){
     if($(this).hasClass('btn-light') && !$(this).hasClass('btn-outline-light')){
-    //  console.log('Active: ' + $(this).text())
       var activePreset = $(this)
-      console.log("AP: " + activePreset.text())
       if(activePreset != undefined){
-        console.log("Attempting to remove: " + activePreset.text())
         if(store.remove(activePreset.text())){
           var allPresetNames = store.get('presets').name
           if(allPresetNames.indexOf(activePreset.text() > -1)){
             allPresetNames.splice(allPresetNames.indexOf(activePreset.text()), 1) // remove deleted preset name from names list
-            console.log("New list: " + allPresetNames)
+
             var allPresets = store.get('presets')
             allPresets.name = allPresetNames
             store.set('presets', allPresets)
@@ -484,10 +429,8 @@ function showPresetInput(val){
 }
 $("#preset-name-btn").on('click', function(){
   var name = $("#preset-name-input").val()
-  //console.log(name)
   if(name != undefined && name.replace(/ /g,'') != ''){
     savePreset($("#preset-name-input").val())
-    // TODO: remove unnecessary whitespace from preset names like '       preset    1    ' should equal 'preset 1'
   } else {
     addNotification("Preset name can't be empty.", 2500, 'info')
   }
@@ -495,27 +438,18 @@ $("#preset-name-btn").on('click', function(){
 
 // SECTION bottom input - confirmation button
 function showConfirmButton(val){
-  // TODO: update the button text when photos are dropped during scene 2 (or, disable drag and drop in scene 2)
   if(val == true){
     $("#confirm-resize-container").removeClass('hide')
     var sizes = $("#sizes").find('.size').not('#new-size')
     var btnText = "Resize x Photos y Times"
     btnText = btnText.replace('y', sizes.length)
     btnText = btnText.replace('x', all_files.length)
-    console.log(btnText)
     $("#confirm-resize-btn").text(btnText)
     $("#confirm-resize-total").text("Total: " + String(sizes.length * all_files.length) + " Photos")
   } else {
     $("#confirm-resize-container").addClass('hide')
   }
 }
-
-
-/*$("#ios-preset").on('click', function(){
-  var btn = $("#ios-preset")
-  btn.removeClass('btn-outline-light')
-  btn.addClass('btn-light')
-}) */
 
 // SECTION s3
 // resizing
@@ -530,7 +464,6 @@ function resizeAllImages(){
   } // TODO: Any chance of this failing?
 
   for(var i = 0; i < all_files.length; i++){
-    console.log("resizing: " + all_files[i])
     resizeImage(all_files[i], folderPath)
   }
 }
@@ -549,11 +482,10 @@ function resizeImage(imgPath, folderPath){
       if(err){
         console.log(err)
       } else {
-        console.log("successfully saved! ")
         var j = all_files.indexOf(imgPath)
         if(j != -1){
           var progress = ((j+1)/all_files.length)*100
-          console.log(progress)
+
           updateProgressBar(progress)
           if(progress < 100){
             if(!finished) {
@@ -585,7 +517,6 @@ function showProgressBar(val){
 // progress bar
 function updateProgressBar(amnt){
   $("#resize-progress-bar").css("width", String(amnt)+"%")
-  console.log(amnt)
 }
 
 // SECTION notifications

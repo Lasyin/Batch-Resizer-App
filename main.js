@@ -26,8 +26,6 @@ const store = new Store({
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-//app.setPath("userData", __dirname + "/saved_recordings")
-
 function createWindow () {
   // Create the browser window.
   if(process.platform == 'darwin'){
@@ -55,26 +53,10 @@ function createWindow () {
   })
 }
 
-/*ipcMain.on('save', (event, args) => {
-  console.log("save: " + args)
-  // save
-  event.sender.send('reply', 'saved')
-}) */
-
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
-
-
-// ipcMain
-ipcMain.on('ondragstart', (event, filePath) => {
-  event.sender.startDrag({
-    file: filePath,
-    icon: '/path/to/icon.png'
-  })
-})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
